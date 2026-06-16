@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gary — CFO Onboarding Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f4f5f7; --surface:#ffffff; --line:#e7e9ee; --line-2:#eef0f4;
+    --ink:#1c2230; --ink-2:#5b6373; --ink-3:#9aa1b1;
+    --accent:#3b5bfd; --accent-soft:#eaeefe;
+    --radius:14px; --radius-sm:10px; --shadow:0 1px 2px rgba(16,24,40,.04),0 4px 12px rgba(16,24,40,.05);
+    --hr-bg:#e6f1fb; --hr-fg:#0c447c; --hr-dot:#378add;
+    --ac-bg:#eaf3de; --ac-fg:#27500a; --ac-dot:#639922;
+    --lg-bg:#faeeda; --lg-fg:#633806; --lg-dot:#ba7517;
+    --fo-bg:#eeedfe; --fo-fg:#3c3489; --fo-dot:#7f77dd;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);
+    -webkit-font-smoothing:antialiased;letter-spacing:-0.01em;font-size:14px;line-height:1.5}
+  h1,h2,h3{letter-spacing:-0.03em;font-weight:600;margin:0}
+  a{color:inherit}
+  .app{display:flex;min-height:100vh}
+
+  .side{width:248px;flex:none;background:var(--surface);border-right:1px solid var(--line);
+    padding:20px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:4px;overflow-y:auto}
+  .brand{display:flex;align-items:center;gap:10px;padding:4px 8px 14px}
+  .brand .mark{width:30px;height:30px;border-radius:8px;background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+  .brand b{font-size:15px;font-weight:600;letter-spacing:-0.03em}
+  .brand span{display:block;font-size:11px;color:var(--ink-3);font-weight:500;letter-spacing:0}
+  .nav-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600;padding:14px 8px 6px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;font-size:13px;
+    font-weight:500;color:var(--ink-2);cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit}
+  .nav-item:hover{background:var(--line-2);color:var(--ink)}
+  .nav-item.active{background:var(--accent-soft);color:var(--accent)}
+  .nav-item .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .nav-item .count{margin-left:auto;font-size:11px;color:var(--ink-3);font-weight:600}
+  .side-foot{margin-top:auto;font-size:11px;color:var(--ink-3);padding:8px;line-height:1.5;display:flex;flex-direction:column;gap:8px}
+  .side-foot .lnk{color:var(--accent);font-weight:600;cursor:pointer;background:none;border:none;font-family:inherit;font-size:11px;text-align:left;padding:0}
+
+  .main{flex:1;min-width:0;padding:24px 30px 60px}
+  .topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+  h1{font-size:22px}
+  .sub{color:var(--ink-2);font-size:13px;margin-top:4px;font-weight:500}
+  .top-actions{display:flex;gap:8px;align-items:center}
+  .btn{font-family:inherit;font-size:12px;font-weight:600;border-radius:999px;padding:8px 14px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);display:inline-flex;align-items:center;gap:6px}
+  .btn:hover{background:var(--bg);color:var(--ink)}
+  .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .btn.primary:hover{background:#2f49d6}
+  .pill-asana{font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:8px 14px;text-decoration:none}
+
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
+  .metric{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+  .metric .k{font-size:12px;color:var(--ink-2);font-weight:600}
+  .metric .v{font-size:24px;font-weight:700;letter-spacing:-0.04em;margin-top:3px}
+  .bar{height:6px;background:var(--line-2);border-radius:99px;overflow:hidden;margin-top:10px}
+  .bar > i{display:block;height:100%;background:var(--ac-dot);border-radius:99px}
+
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px}
+  .panel-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;cursor:pointer}
+  .panel-h h2{font-size:15px}
+  .panel-h .chev{color:var(--ink-3);transition:transform .2s}
+  .panel.open .panel-h .chev{transform:rotate(180deg)}
+  .panel-body{padding:0 18px 18px;display:none;color:var(--ink-2);font-size:13.5px;line-height:1.65}
+  .panel.open .panel-body{display:block}
+  .panel-body b{color:var(--ink);font-weight:600}
+  .timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:6px 0 4px}
+  .tl{background:var(--bg);border-radius:var(--radius-sm);padding:12px 14px}
+  .tl .ph{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-3);font-weight:600}
+  .tl .dt{font-weight:600;font-size:14px;letter-spacing:-0.02em;margin-top:3px;color:var(--ink)}
+  .tl .ds{font-size:12px;color:var(--ink-2);margin-top:3px}
+  .flow{counter-reset:s;margin:10px 0 0;padding:0;list-style:none}
+  .flow li{position:relative;padding:8px 0 8px 30px;border-left:2px solid var(--lg-bg);margin-left:8px}
+  .flow li:before{counter-increment:s;content:counter(s);position:absolute;left:-13px;top:7px;width:24px;height:24px;
+    border-radius:50%;background:var(--lg-bg);color:var(--lg-fg);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .flow li:last-child{border-left-color:transparent}
+
+  .board{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-items:start}
+  .col{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow)}
+  .col.s-unexposed{background:#fbfbfa}
+  .col-h{display:flex;align-items:center;gap:8px;padding:4px 6px 12px}
+  .col-h .dot{width:9px;height:9px;border-radius:50%}
+  .col-h .nm{font-weight:600;font-size:13.5px;letter-spacing:-0.02em}
+  .col-h .ct{font-size:12px;color:var(--ink-3);font-weight:600;margin-left:auto;background:var(--bg);border-radius:99px;padding:2px 9px}
+  .cards{display:flex;flex-direction:column;gap:10px;min-height:40px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:11px 12px;box-shadow:0 1px 2px rgba(16,24,40,.05);cursor:pointer}
+  .card:hover{border-color:var(--accent);box-shadow:0 1px 2px rgba(16,24,40,.06),0 4px 10px rgba(59,91,253,.08)}
+  .tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;align-items:center}
+  .tag{font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:999px;letter-spacing:-0.01em}
+  .t-hr{background:var(--hr-bg);color:var(--hr-fg)} .t-accounting{background:var(--ac-bg);color:var(--ac-fg)}
+  .t-legal{background:var(--lg-bg);color:var(--lg-fg)} .t-familyoffice{background:var(--fo-bg);color:var(--fo-fg)}
+  .ttl{font-size:13px;font-weight:600;line-height:1.35;letter-spacing:-0.02em;margin:0 0 9px}
+  .seg{display:flex;gap:3px;margin-bottom:9px}
+  .seg i{height:4px;flex:1;border-radius:2px;background:var(--line)}
+  .seg i.on{background:var(--accent)}
+  .col.s-own .seg i.on{background:var(--ac-dot)}
+  .meta{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink-3);font-weight:500;flex-wrap:wrap}
+  .meta .src{font-weight:600;color:var(--ink-2)}
+  .meta .ic{display:inline-flex;align-items:center;gap:3px}
+  .card-asana{color:var(--accent);text-decoration:none;font-weight:600}
+  .card-asana:hover{text-decoration:underline}
+  .row-btns{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:10px;border-top:1px solid var(--line-2);padding-top:9px}
+  .mv{border:1px solid var(--line);background:var(--surface);border-radius:7px;cursor:pointer;font-family:inherit;font-size:11px;font-weight:600;color:var(--ink-2);padding:4px 9px}
+  .mv:hover:not(:disabled){background:var(--bg);color:var(--ink)}
+  .mv:disabled{opacity:.32;cursor:default}
+  .mv.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .mv.primary:hover{background:#2f49d6}
+  .empty{font-size:12px;color:var(--ink-3);text-align:center;padding:16px 6px;font-weight:500}
+
+  .overlay{position:fixed;inset:0;background:rgba(20,26,40,.42);display:none;z-index:50;justify-content:flex-end}
+  .overlay.show{display:flex}
+  .drawer{width:min(460px,92vw);background:var(--surface);height:100%;overflow-y:auto;padding:22px 24px;box-shadow:-8px 0 30px rgba(16,24,40,.12)}
+  .modal{margin:auto;width:min(520px,92vw);background:var(--surface);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);max-height:90vh;overflow-y:auto}
+  .dh{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+  .dh h2{font-size:18px;line-height:1.3}
+  .x{border:none;background:var(--bg);border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:16px;color:var(--ink-2);flex:none}
+  .x:hover{background:var(--line)}
+  .fld{margin-bottom:16px}
+  .fld label{display:block;font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:6px}
+  .fld input[type=text],.fld select,.fld textarea{width:100%;font-family:inherit;font-size:13px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink)}
+  .fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .checks{display:flex;flex-wrap:wrap;gap:8px}
+  .chk{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
+  .chk input{accent-color:var(--accent)}
+  .toolbar{display:flex;gap:4px;border:1px solid var(--line);border-bottom:none;border-radius:9px 9px 0 0;padding:6px;background:var(--bg)}
+  .tb{border:none;background:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--ink-2);width:30px;height:28px;border-radius:6px}
+  .tb:hover{background:var(--line-2);color:var(--ink)}
+  .notes{min-height:130px;border:1px solid var(--line);border-radius:0 0 9px 9px;padding:11px;font-size:13px;line-height:1.6;outline:none}
+  .notes:focus{border-color:var(--accent)}
+  .notes ul,.notes ol{margin:6px 0;padding-left:22px}
+  .notes a{color:var(--accent)}
+  .asana-cur{font-size:12px;background:var(--accent-soft);color:var(--accent);border-radius:8px;padding:8px 11px;display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;font-weight:600}
+  .asana-cur a{text-decoration:none}
+  .drawer-state{display:flex;gap:6px;flex-wrap:wrap}
+  .ds-btn{font-family:inherit;font-size:11.5px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);border-radius:999px;padding:6px 12px;cursor:pointer}
+  .ds-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .danger{color:#a32d2d;background:none;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:0}
+  @media(max-width:1080px){.board{grid-template-columns:repeat(2,1fr)}.metrics{grid-template-columns:repeat(2,1fr)}.timeline{grid-template-columns:1fr}}
+  @media(max-width:720px){.side{display:none}.board,.metrics{grid-template-columns:1fr}.main{padding:18px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="mark">R</div><div><b>CFO Onboarding</b><span>Raborn · Gary Billington</span></div></div>
+    <button class="nav-item active" data-filter="all">All responsibilities <span class="count" id="c-all">0</span></button>
+    <div class="nav-label">Pillars</div>
+    <button class="nav-item" data-filter="hr"><span class="dot" style="background:var(--hr-dot)"></span>HR <span class="count" id="c-hr">0</span></button>
+    <button class="nav-item" data-filter="accounting"><span class="dot" style="background:var(--ac-dot)"></span>Accounting <span class="count" id="c-accounting">0</span></button>
+    <button class="nav-item" data-filter="legal"><span class="dot" style="background:var(--lg-dot)"></span>Legal <span class="count" id="c-legal">0</span></button>
+    <button class="nav-item" data-filter="familyoffice"><span class="dot" style="background:var(--fo-dot)"></span>Family Office <span class="count" id="c-familyoffice">0</span></button>
+    <div class="side-foot">
+      Source of truth for Gary's transition — sits on top of Asana. Click any card to link a task, add notes, or advance it.
+      <button class="lnk" id="export">Export data (JSON)</button>
+      <button class="lnk" id="import">Import data</button>
+      <button class="lnk" id="reset">Reset to default</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div><h1>Welcome, Gary 👋</h1><p class="sub">Your roadmap to running finance, HR &amp; legal across the Raborn entities.</p></div>
+      <div class="top-actions">
+        <a class="pill-asana" href="https://app.asana.com/1/15944993514479/project/1200701997995781" target="_blank" rel="noopener">Asana ↗</a>
+        <button class="btn primary" id="new-resp">＋ New responsibility</button>
+      </div>
+    </div>
+
+    <div class="metrics">
+      <div class="metric"><div class="k">Transition window</div><div class="v">3 mo</div><div class="sub" style="font-size:11px;margin-top:2px">Jun 17 – Sep 12</div></div>
+      <div class="metric"><div class="k">In the pipeline</div><div class="v" id="m-active">0</div><div class="sub" style="font-size:11px;margin-top:2px">exposed &amp; beyond</div></div>
+      <div class="metric"><div class="k">Owned</div><div class="v" id="m-own">0</div><div class="sub" style="font-size:11px;margin-top:2px">no oversight needed</div></div>
+      <div class="metric"><div class="k">Overall progress</div><div class="v" id="m-pct">0%</div><div class="bar"><i id="m-bar" style="width:0%"></i></div></div>
+    </div>
+
+    <div class="panel open" id="p-overview">
+      <div class="panel-h"><h2>The 30,000-ft picture</h2><span class="chev">⌄</span></div>
+      <div class="panel-body">
+        Gary is stepping into a <b>family-office-level CFO</b> role over the Raborn entities — effectively running the third-party compliance function across <b>accounting, HR, and legal</b>. Anything contract-, employee-onboarding-, or legal-related routes to Gary and his team. Roughly 70–80% of the work flows from the Raborn Digital sphere (Digital, Media, Software, IT).
+        <div class="timeline">
+          <div class="tl"><div class="ph">Months 1–2</div><div class="dt">Ease Alex's load</div><div class="ds">Take over recurring HR &amp; accounting — payroll, 401(k), invoicing — alongside Chace.</div></div>
+          <div class="tl"><div class="ph">Month 3</div><div class="dt">Ramp &amp; broaden</div><div class="ds">Pick up legal/contract work and Tyler's items; deeper ownership.</div></div>
+          <div class="tl"><div class="ph">Sep 12 →</div><div class="dt">Full ownership</div><div class="ds">Family-office work: money movement, agreements, entity funding.</div></div>
+        </div>
+        <p style="margin:14px 0 0">Cadence: a standing <b>10am ET daily check-in</b> (tapering to a few days/week), heavily <b>Loom-driven</b>. This board is the source of truth — Alex's recurring tasks come first, then Tyler's.</p>
+      </div>
+    </div>
+
+    <div class="panel" id="p-flow">
+      <div class="panel-h"><h2>How contracts flow (your lead role)</h2><span class="chev">⌄</span></div>
+      <div class="panel-body">
+        You take the lead reviewer seat. Alex runs a contract through once and gives general bullets; <b>you do the majority of the lift</b> — the independent review, the back-and-forth with vendors and stakeholders, the reconciliation — in the traditional lawyer role.
+        <ol class="flow">
+          <li><b>Alex's first pass.</b> Reviews with Claude, hands you general thoughts &amp; concerns.</li>
+          <li><b>Your deep review.</b> Independently review, compare against Alex's notes, flag changes.</li>
+          <li><b>Negotiate.</b> Take the back-and-forth — "how do you want to handle this clause?"</li>
+          <li><b>Reconcile with Alex.</b> Send back so he can confirm you're aligned. Reference standard: the BAAs already done in Cowork.</li>
+          <li><b>Execute.</b> Send to the vendor for signature.</li>
+        </ol>
+      </div>
+    </div>
+
+    <h2 style="font-size:16px;margin:6px 0 14px">Responsibilities board</h2>
+    <div class="board" id="board"></div>
+  </main>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<script>
+const PILLARS={hr:'HR',accounting:'Accounting',legal:'Legal',familyoffice:'Family Office'};
+const STATES=[{id:'unexposed',nm:'Unexposed',dot:'#888780'},{id:'exposed',nm:'Exposed',dot:'#378add'},{id:'performed',nm:'Performed',dot:'#ef9f27'},{id:'own',nm:'Own',dot:'#639922'}];
+const AB='https://app.asana.com/1/15944993514479/project/1200701997995781/task/';
+const ASANA_TASKS=[
+  {n:'[HR] Add Derrick and Brad to Raborn IT ADP Company',u:AB+'1215171290904839'},
+  {n:'[HR] Set Up Employment Tax Accounts for Raborn IT',u:AB+'1215777632949198'},
+  {n:'[HR] Set Up WC Accounts for Raborn IT LLC',u:AB+'1215777632949195'},
+  {n:'[HR] Review Vanguard Elections vs. ADP Deductions',u:AB+'1214949479998186'},
+  {n:'[HR] Run Payroll Reconciliation Report for Tyler',u:AB+'1215331406925027'},
+  {n:'[HR] Parental Leave Documentation',u:AB+'1213043129876927'},
+  {n:'[HR] New FTE Onboarding/Offboarding Checklist/Template',u:AB+'1209323777928960'},
+  {n:'[HR] Employee Sick Day Form/Process for Directors',u:AB+'1209323777928957'},
+  {n:"[HR] Correct Ryan's PTO",u:AB+'1215330792574826'},
+  {n:'[HR] Systems Set Up for New Entities',u:AB+'1213175693627113'},
+  {n:'[HR] Post Weekly OOO Update',u:AB+'1215774786184191'},
+  {n:'[Payroll] Process 28th Payroll (No Commission)',u:AB+'1215292220635574'},
+  {n:'[Mo. Invoicing] Process Fixed Rate Client Invoices',u:AB+'1215568399043167'},
+  {n:'[Mo. Invoicing] Process Hourly Client Invoices',u:AB+'1215565972364681'},
+  {n:'[Mo. Invoicing] Process Videography Projects',u:AB+'1215640942024577'},
+  {n:'[Mo. Invoicing] Remind Coordinators to Submit Client Expenses',u:AB+'1215295258036137'},
+  {n:'[Bookkeeping] Categorize Transactions from Previous Week',u:AB+'1215591874290234'},
+  {n:"[Bookkeeping] Submit Smartster's Hours into Asana",u:AB+'1215478280354013'},
+  {n:"[Bookkeeping] Charge for Previous Month's GoDaddy Fees",u:AB+'1211969750871592'},
+  {n:'[Bookkeeping] Verify Invoice Sales Categories are Correct',u:AB+'1214949793326475'},
+  {n:'[Bookkeeping] Audit Unsent Invoices',u:AB+'1215565972207190'},
+  {n:'[Bookkeeping] Required Hosting Updates (Asana GD Tasks)',u:AB+'1209623945222759'},
+  {n:'[Bookkeeping] Check AP Schedule Against Bank Balance',u:AB+'1215639859805813'},
+  {n:'[Bookkeeping] Process Watkins / Residential Roofers ACH Payment',u:AB+'1215088140498645'},
+  {n:'[AP] Process Expense Submissions/Payments',u:AB+'1215641943668839'},
+  {n:'[AR] Send Past Due Invoice Reminders & Statements',u:AB+'1214956672744862'},
+  {n:'[Subscription] DAJLAW - GoDaddy Hosting & Email Annual',u:AB+'1210616290967164'},
+  {n:'[Subscription] BHVNTSM - Events Calendar Pro Annual',u:AB+'1210558912926891'},
+  {n:'Report Project - Team Bonus Calculations',u:AB+'1213198116025159'},
+  {n:'Update SBA Loan: Interest and Principal Amounts',u:AB+'1215146799873031'},
+  {n:'Reconcile SBA Loan: Interests and Principal',u:AB+'1215289991071969'}
+];
+const SEED=[
+  {id:'pay-run',t:'Process payroll — 12th & 26th (incl. commission)',p:['hr'],s:'exposed',rec:1,src:'Alex',a:11},
+  {id:'vanguard',t:'Vanguard 401(k) submission — 15th & 29th',p:['hr'],s:'exposed',rec:1,src:'Alex'},
+  {id:'401k-report',t:'401(k) contribution reporting & reconciliation',p:['hr'],s:'exposed',rec:1,src:'Alex'},
+  {id:'vanguard-vs-adp',t:'Review Vanguard elections vs. ADP deductions',p:['hr'],s:'exposed',rec:0,src:'Alex',a:3},
+  {id:'pay-recon-tyler',t:'Run payroll reconciliation report for Tyler',p:['hr'],s:'exposed',rec:1,src:'Alex',a:4},
+  {id:'adp-add',t:'Add Derrick & Brad to Raborn IT ADP company',p:['hr'],s:'exposed',rec:0,src:'Alex',a:0},
+  {id:'wc-rit',t:'Set up WC accounts for Raborn IT LLC',p:['hr'],s:'exposed',rec:0,src:'Alex',a:2},
+  {id:'bonus',t:'Quarterly bonus payments (Q2 / Q3 / Q4)',p:['hr'],s:'unexposed',rec:1,src:'Alex',a:28},
+  {id:'benefits',t:'Benefits admin & BCBS open enrollment',p:['hr'],s:'unexposed',rec:0,src:'Alex'},
+  {id:'verify-ded',t:'Have team verify payroll deductions for accuracy',p:['hr'],s:'unexposed',rec:1,src:'Alex'},
+  {id:'addr-confirm',t:'Bi-annual employee address confirmation',p:['hr'],s:'unexposed',rec:1,src:'Alex'},
+  {id:'pto',t:'Audit PTO balances, accruals & negative-PTO clawbacks',p:['hr'],s:'unexposed',rec:1,src:'Alex',a:8},
+  {id:'hr-support',t:'Employee HR support (benefits, payroll, PTO questions)',p:['hr'],s:'unexposed',rec:0,src:'Alex'},
+  {id:'invoicing',t:'Monthly client invoicing (fixed-rate, hourly, video)',p:['accounting'],s:'exposed',rec:1,src:'Chace',a:12},
+  {id:'approve-chace',t:"Approve Chace's invoices",p:['accounting'],s:'exposed',rec:1,src:'Alex'},
+  {id:'bill-pay',t:'Bill payment',p:['accounting'],s:'exposed',rec:1,src:'Alex',a:24},
+  {id:'txn-cat',t:'Transaction categorization',p:['accounting'],s:'exposed',rec:1,src:'Alex',a:16},
+  {id:'ach-cc',t:'Client ACH/CC payment processing & routing',p:['accounting'],s:'exposed',rec:1,src:'Alex',a:23},
+  {id:'adv-invoice',t:'Advanced invoicing & invoice QC review',p:['accounting'],s:'unexposed',rec:0,src:'Alex',a:20},
+  {id:'godaddy',t:'Audit & invoice GoDaddy fees',p:['accounting'],s:'unexposed',rec:1,src:'Alex',a:18},
+  {id:'subs',t:'Hosting & subscription renewals (audit before renew)',p:['accounting'],s:'unexposed',rec:1,src:'Alex',a:26},
+  {id:'schwartz',t:'Schwartz quarterly report',p:['accounting'],s:'unexposed',rec:1,src:'Alex'},
+  {id:'wa-wc',t:'WA workers’ comp quarterly payment',p:['accounting'],s:'unexposed',rec:1,src:'Alex'},
+  {id:'adp-recon',t:'ADP: reconcile two payrolls from prior month (GL report)',p:['accounting'],s:'unexposed',rec:1,src:'Alex'},
+  {id:'client-exp',t:'Process client-related expenses & pass-throughs',p:['accounting'],s:'unexposed',rec:0,src:'Alex',a:24},
+  {id:'smartster',t:'Submit Smartster Media hours into Asana',p:['accounting'],s:'unexposed',rec:1,src:'Alex',a:17},
+  {id:'sales-cat',t:'Verify invoice sales categories are correct',p:['accounting'],s:'unexposed',rec:1,src:'Alex',a:19},
+  {id:'contract-review',t:'Contract review, negotiation & processing (MSAs, BAAs, SaaS)',p:['legal'],s:'unexposed',rec:0,src:'Alex / Tyler',wf:1},
+  {id:'tc',t:'Terms & Conditions (RM & RIT)',p:['legal'],s:'unexposed',rec:0,src:'Tyler'},
+  {id:'emp-contract',t:'Employee onboarding contract',p:['legal','hr'],s:'unexposed',rec:0,src:'Tyler'},
+  {id:'handbook',t:'Employee handbook',p:['legal','hr'],s:'unexposed',rec:0,src:'Tyler'},
+  {id:'commission',t:'Monthly commission reporting & payout',p:['accounting','hr'],s:'exposed',rec:1,src:'Alex',a:28},
+  {id:'emp-tax',t:'Set up employment tax accounts (Raborn IT)',p:['hr','legal'],s:'exposed',rec:0,src:'Alex',a:1},
+  {id:'new-client-qb',t:'New client setup in QuickBooks & commission tracking',p:['accounting','familyoffice'],s:'unexposed',rec:0,src:'Alex'},
+  {id:'qb-setup',t:'QuickBooks setup: Raborn IT, Realty, Holdings',p:['familyoffice'],s:'exposed',rec:0,src:'Tyler'},
+  {id:'money-move',t:'Logistical money movement between accounts',p:['familyoffice'],s:'unexposed',rec:0,src:'Tyler'},
+  {id:'mgmt-agree',t:'Management / service agreements',p:['familyoffice'],s:'unexposed',rec:0,src:'Tyler'},
+  {id:'entity-fund',t:'Entity funding',p:['familyoffice'],s:'unexposed',rec:0,src:'Tyler'},
+  {id:'cross-firm',t:'Cross-firm invoicing & reporting (Holdings, IT)',p:['familyoffice'],s:'unexposed',rec:0,src:'Tyler'}
+];
+const WF="Alex's first pass → your deep review → negotiate with vendor → reconcile with Alex → execute. You carry the majority of the lift.";
+
+const KEY='gary-onboard-v2';
+function seedData(){return SEED.map(x=>({id:x.id,t:x.t,p:x.p.slice(),s:x.s,rec:x.rec,src:x.src,wf:x.wf||0,
+  asana:(x.a!=null?{n:ASANA_TASKS[x.a].n,u:ASANA_TASKS[x.a].u}:null),notes:''}));}
+let data=load();let filter='all';let openId=null;
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(Array.isArray(d)&&d.length)return d;}catch(e){}return seedData();}
+function save(){localStorage.setItem(KEY,JSON.stringify(data));}
+function get(id){return data.find(x=>x.id===id);}
+function segOn(s){return{unexposed:0,exposed:1,performed:2,own:3}[s];}
+
+function render(){
+  const board=document.getElementById('board');board.innerHTML='';
+  const shown=data.filter(t=>filter==='all'||t.p.includes(filter));
+  STATES.forEach(col=>{
+    const items=shown.filter(t=>t.s===col.id);
+    const el=document.createElement('div');el.className='col s-'+col.id;
+    el.innerHTML='<div class="col-h"><span class="dot" style="background:'+col.dot+'"></span><span class="nm">'+col.nm+'</span><span class="ct">'+items.length+'</span></div>';
+    const wrap=document.createElement('div');wrap.className='cards';
+    if(!items.length)wrap.innerHTML='<div class="empty">Nothing here yet</div>';
+    items.forEach(t=>wrap.appendChild(card(t)));
+    el.appendChild(wrap);board.appendChild(el);
+  });
+  counts();
+}
+function card(t){
+  const idx=STATES.findIndex(s=>s.id===t.s);const on=segOn(t.s);
+  const d=document.createElement('div');d.className='card';d.dataset.open=t.id;
+  let tags=t.p.map(p=>'<span class="tag t-'+p+'">'+PILLARS[p]+'</span>').join('');
+  let seg='';for(let i=0;i<3;i++)seg+='<i class="'+(i<on?'on':'')+'"></i>';
+  let icons='';
+  if(t.notes&&t.notes.replace(/<[^>]*>/g,'').trim())icons+='<span class="ic" title="Has notes">📝</span>';
+  const alink=t.asana?'<a class="card-asana" href="'+t.asana.u+'" target="_blank" rel="noopener" title="'+esc(t.asana.n)+'">Asana ↗</a>':'';
+  d.innerHTML='<div class="tags">'+tags+(icons?'<span style="margin-left:auto;font-size:11px">'+icons+'</span>':'')+'</div>'+
+    '<p class="ttl">'+esc(t.t)+'</p><div class="seg">'+seg+'</div>'+
+    '<div class="meta"><span class="src">from '+esc(t.src)+'</span>'+(t.rec?'<span class="ic">↻ recurring</span>':'')+(alink?'<span style="margin-left:auto">'+alink+'</span>':'')+'</div>'+
+    '<div class="row-btns"><button class="mv" data-back="'+t.id+'" '+(idx===0?'disabled':'')+'>← back</button>'+
+    '<button class="mv primary" data-fwd="'+t.id+'" '+(idx===3?'disabled':'')+'>'+(idx===0?'Expose →':idx===1?'Performed →':idx===2?'Owns it →':'Owned')+'</button></div>';
+  return d;
+}
+function esc(s){return(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function move(id,dir){const t=get(id);const idx=STATES.findIndex(s=>s.id===t.s);t.s=STATES[Math.max(0,Math.min(3,idx+dir))].id;save();render();}
+function counts(){
+  const cnt=p=>data.filter(t=>p==='all'||t.p.includes(p)).length;
+  ['all','hr','accounting','legal','familyoffice'].forEach(p=>document.getElementById('c-'+p).textContent=cnt(p));
+  document.getElementById('m-active').textContent=data.filter(t=>t.s!=='unexposed').length;
+  document.getElementById('m-own').textContent=data.filter(t=>t.s==='own').length;
+  const pct=data.length?Math.round(data.reduce((a,t)=>a+segOn(t.s),0)/(data.length*3)*100):0;
+  document.getElementById('m-pct').textContent=pct+'%';document.getElementById('m-bar').style.width=pct+'%';
+}
+
+const ov=document.getElementById('overlay');
+function closeOv(){ov.classList.remove('show');ov.innerHTML='';openId=null;}
+ov.addEventListener('mousedown',e=>{if(e.target===ov)closeOv();});
+
+function openDetail(id){
+  openId=id;const t=get(id);
+  const opts='<option value="">— link an Asana task —</option>'+ASANA_TASKS.map((x,i)=>'<option value="'+i+'"'+(t.asana&&t.asana.u===x.u?' selected':'')+'>'+esc(x.n)+'</option>').join('')+'<option value="custom">Paste a URL…</option>';
+  const pills=Object.keys(PILLARS).map(p=>'<label class="chk"><input type="checkbox" data-p="'+p+'" '+(t.p.includes(p)?'checked':'')+'>'+PILLARS[p]+'</label>').join('');
+  const stbtns=STATES.map(s=>'<button class="ds-btn'+(t.s===s.id?' active':'')+'" data-set="'+s.id+'">'+s.nm+'</button>').join('');
+  ov.innerHTML='<div class="drawer"><div class="dh"><h2 id="d-title" contenteditable="true">'+esc(t.t)+'</h2><button class="x" id="d-close">✕</button></div>'+
+    '<div class="fld"><label>Pillars</label><div class="checks" id="d-pills">'+pills+'</div></div>'+
+    '<div class="fld"><label>State</label><div class="drawer-state" id="d-state">'+stbtns+'</div></div>'+
+    '<div class="fld"><label>Source / who hands it off</label><input type="text" id="d-src" value="'+esc(t.src)+'"></div>'+
+    '<div class="fld"><label><input type="checkbox" id="d-rec" '+(t.rec?'checked':'')+' style="accent-color:var(--accent)"> Recurring</label></div>'+
+    '<div class="fld"><label>Asana task</label>'+(t.asana?'<div class="asana-cur"><a href="'+t.asana.u+'" target="_blank" rel="noopener">'+esc(t.asana.n)+' ↗</a><button class="x" id="d-unlink" style="width:24px;height:24px;font-size:13px">✕</button></div>':'')+
+    '<select id="d-asana">'+opts+'</select><input type="text" id="d-asana-url" placeholder="https://app.asana.com/…" style="margin-top:8px;display:none"></div>'+
+    '<div class="fld"><label>Notes</label><div class="toolbar"><button class="tb" data-cmd="bold" title="Bold"><b>B</b></button><button class="tb" data-cmd="italic" title="Italic"><i>I</i></button><button class="tb" data-cmd="insertUnorderedList" title="Bullets">•</button><button class="tb" data-cmd="insertOrderedList" title="Numbered">1.</button><button class="tb" data-cmd="link" title="Link">🔗</button></div>'+
+    '<div class="notes" id="d-notes" contenteditable="true">'+(t.notes||'')+'</div></div>'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px"><button class="danger" id="d-del">Delete responsibility</button><button class="btn primary" id="d-save">Save</button></div></div>';
+  ov.classList.add('show');
+  document.getElementById('d-close').onclick=closeOv;
+  const sel=document.getElementById('d-asana'),url=document.getElementById('d-asana-url');
+  sel.onchange=()=>{url.style.display=sel.value==='custom'?'block':'none';};
+  document.querySelectorAll('#d-state .ds-btn').forEach(b=>b.onclick=()=>{document.querySelectorAll('#d-state .ds-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');});
+  const ub=document.getElementById('d-unlink');if(ub)ub.onclick=()=>{t.asana=null;save();openDetail(id);};
+  document.querySelectorAll('.tb').forEach(b=>b.onmousedown=e=>{e.preventDefault();const c=b.dataset.cmd;if(c==='link'){const u=prompt('Link URL:');if(u)document.execCommand('createLink',false,u);}else document.execCommand(c,false,null);});
+  document.getElementById('d-save').onclick=()=>{
+    t.t=document.getElementById('d-title').innerText.trim()||t.t;
+    t.p=[...document.querySelectorAll('#d-pills input:checked')].map(i=>i.dataset.p);if(!t.p.length)t.p=['accounting'];
+    t.s=document.querySelector('#d-state .ds-btn.active').dataset.set;
+    t.src=document.getElementById('d-src').value.trim()||t.src;
+    t.rec=document.getElementById('d-rec').checked?1:0;
+    t.notes=document.getElementById('d-notes').innerHTML;
+    const v=sel.value;if(v==='custom'){if(url.value.trim())t.asana={n:url.value.trim(),u:url.value.trim()};}
+    else if(v!==''){t.asana={n:ASANA_TASKS[v].n,u:ASANA_TASKS[v].u};}
+    save();closeOv();render();
+  };
+  document.getElementById('d-del').onclick=()=>{if(confirm('Delete this responsibility?')){data=data.filter(x=>x.id!==id);save();closeOv();render();}};
+}
+
+function bindToolbar(){document.querySelectorAll('.tb').forEach(b=>b.onmousedown=e=>{e.preventDefault();const c=b.dataset.cmd;if(c==='link'){const u=prompt('Link URL:');if(u)document.execCommand('createLink',false,u);}else document.execCommand(c,false,null);});}
+const TBHTML='<div class="toolbar"><button class="tb" data-cmd="bold" title="Bold"><b>B</b></button><button class="tb" data-cmd="italic" title="Italic"><i>I</i></button><button class="tb" data-cmd="insertUnorderedList" title="Bullets">•</button><button class="tb" data-cmd="insertOrderedList" title="Numbered">1.</button><button class="tb" data-cmd="link" title="Link">🔗</button></div>';
+function asanaOpts(sel){return '<option value="">— link an Asana task —</option>'+ASANA_TASKS.map((x,i)=>'<option value="'+i+'"'+(sel===i?' selected':'')+'>'+esc(x.n)+'</option>').join('')+'<option value="custom">Paste a URL…</option>';}
+function openNew(){
+  const pills=Object.keys(PILLARS).map(p=>'<label class="chk"><input type="checkbox" data-p="'+p+'">'+PILLARS[p]+'</label>').join('');
+  ov.innerHTML='<div class="modal"><div class="dh"><h2>New responsibility</h2><button class="x" id="n-close">✕</button></div>'+
+    '<div class="fld"><label>Title</label><input type="text" id="n-title" placeholder="e.g. Quarterly tax estimate filing"></div>'+
+    '<div class="fld"><label>Pillars</label><div class="checks" id="n-pills">'+pills+'</div></div>'+
+    '<div class="fld"><label>Source / who hands it off</label><input type="text" id="n-src" placeholder="Alex, Tyler, Chace…"></div>'+
+    '<div class="fld"><label><input type="checkbox" id="n-rec" style="accent-color:var(--accent)"> Recurring</label></div>'+
+    '<div class="fld"><label>Asana task link (optional)</label><input type="text" id="n-asana-url" placeholder="Paste the Asana task URL…"></div>'+
+    '<div class="fld"><label>Notes (optional)</label>'+TBHTML+'<div class="notes" id="n-notes" contenteditable="true"></div></div>'+
+    '<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px"><button class="btn" id="n-cancel">Cancel</button><button class="btn primary" id="n-add">Add to Unexposed</button></div></div>';
+  ov.classList.add('show');bindToolbar();
+  document.getElementById('n-close').onclick=closeOv;document.getElementById('n-cancel').onclick=closeOv;
+  document.getElementById('n-add').onclick=()=>{
+    const title=document.getElementById('n-title').value.trim();if(!title){alert('Add a title');return;}
+    let p=[...document.querySelectorAll('#n-pills input:checked')].map(i=>i.dataset.p);if(!p.length)p=['accounting'];
+    const u=document.getElementById('n-asana-url').value.trim();
+    const asana=u?{n:'Asana task',u:u}:null;
+    data.push({id:'r'+Date.now(),t:title,p:p,s:'unexposed',rec:document.getElementById('n-rec').checked?1:0,
+      src:document.getElementById('n-src').value.trim()||'—',wf:0,asana:asana,notes:document.getElementById('n-notes').innerHTML});
+    save();closeOv();render();
+  };
+}
+
+document.addEventListener('click',e=>{
+  const fwd=e.target.closest('.mv[data-fwd]'),back=e.target.closest('.mv[data-back]');
+  const nav=e.target.closest('.nav-item'),ph=e.target.closest('.panel-h'),cd=e.target.closest('.card[data-open]');
+  if(e.target.closest('a.card-asana'))return;
+  if(fwd){e.stopPropagation();move(fwd.dataset.fwd,1);return;}
+  if(back){e.stopPropagation();move(back.dataset.back,-1);return;}
+  if(nav){filter=nav.dataset.filter;document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));nav.classList.add('active');render();return;}
+  if(ph){ph.parentElement.classList.toggle('open');return;}
+  if(cd){openDetail(cd.dataset.open);return;}
+});
+document.getElementById('new-resp').onclick=openNew;
+document.getElementById('export').onclick=()=>{const b=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='gary-onboarding-data.json';a.click();};
+document.getElementById('import').onclick=()=>{const i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=()=>{const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(Array.isArray(d)){data=d;save();render();}}catch(e){alert('Could not read file');}};r.readAsText(f);};i.click();};
+document.getElementById('reset').onclick=()=>{if(confirm('Reset the board to the default responsibilities? This clears your changes in this browser.')){data=seedData();save();render();}};
+render();
+</script>
+</body>
+</html>
